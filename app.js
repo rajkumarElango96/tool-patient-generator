@@ -15,7 +15,7 @@ const app = express();
 const Server = require('http').Server;
 const server = new Server(app);
 const path = require('path');
-const port = 5000;
+const port = 5001;
 const WebSocketServer = require("websocket").server;
 var format = require("string-template");
 const { generateCIPA } = require('./functions.js');
@@ -43,7 +43,8 @@ var passwordIRIS = "SYS";
 // const connection = irisNative.createConnection({host: ipIRIS, port: portIRIS, ns: namespaceIRIS, user: userIRIS, pwd: passwordIRIS});
 // const irisNative = connection.createIris();
 
-server.listen(port, () => console.log("Server at 5000"));
+server.listen(port, () => console.log(`Server at ${port}`))
+//.error((err)=>console.error(err));
 
 // Creamos el servidor de sockets y lo incorporamos al servidor de la aplicación
 const wsServer = new WebSocketServer({
@@ -192,6 +193,17 @@ wsServer.on("request", (request) =>{
         }
         else if (dataRequest.type === 'messages')
         {
+            // Guard: messages are built from generated patients and clinicians.
+            // Without them the CSV read throws and crashes the whole server.
+            const hasRows = (f) => fs.existsSync(f) &&
+                fs.readFileSync(f, 'utf8').split(/\r?\n/).filter(l => l.trim()).length > 1;
+            const missing = [];
+            if (!hasRows('./views/files/generated/patients.csv')) missing.push('patients');
+            if (!hasRows('./views/files/generated/clinicians.csv')) missing.push('clinicians');
+            if (missing.length) {
+                connection.send(sendMessage('Generate ' + missing.join(' and ') + ' first (at least 1 each), then generate messages.'));
+                return;
+            }
             patients = [];
             clinicians = [];
             allergies = [];

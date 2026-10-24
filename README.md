@@ -12,7 +12,7 @@ $ npm install
 $ node .\app.js
 ```
 
-The application will run on your localhost, port 5000: [http://localhost:5000](http://localhost:5000)
+The application will run on your localhost, port 5001: [http://localhost:5001](http://localhost:5001) (5000 is taken by AirPlay Receiver on macOS)
 
 # What do you need to generate messages?
 

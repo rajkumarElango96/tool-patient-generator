@@ -1,16 +1,16 @@
 function downloadPatients()
 {
-    window.location = 'http://localhost:5000/download/patients'
+    window.location = 'http://localhost:5001/download/patients'
 }
 
 function downloadMessages()
 {
-    window.location = 'http://localhost:5000/download/messages?type='+$('#typeEvent').val();
+    window.location = 'http://localhost:5001/download/messages?type='+$('#typeEvent').val();
 }
 
 function downloadClinicians()
 {
-    window.location = 'http://localhost:5000/download/clinicians'
+    window.location = 'http://localhost:5001/download/clinicians'
 }
 
 function sendGenerationRequest(type){
@@ -57,7 +57,7 @@ function init() {
 }
 
 function wsConnect() {
-    websocket = new WebSocket("ws://localhost:5000");
+    websocket = new WebSocket("ws://localhost:5001");
 
     websocket.onopen = function (evt) {
         onOpen(evt)
