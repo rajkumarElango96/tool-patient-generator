@@ -159,6 +159,7 @@ function makeJourneys(cfg, state, t) {
 
     // Admissions: a Poisson process at the configured daily rate.
     const ratePerMs = cfg.admissionsPerDay / DAY;
+    if (!(ratePerMs > 0)) throw new Error('SIM_ADMISSIONS_PER_DAY must be greater than 0');
     let at = from;
     for (;;) {
       at += Math.max(1000, Math.round(-Math.log(1 - t.u()) / ratePerMs));

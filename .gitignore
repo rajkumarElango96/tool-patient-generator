@@ -110,3 +110,9 @@ dist
 output/
 .env
 *.bak
+.DS_Store
+*.old
+
+# Claude Code
+.claude/
+CLAUDE.md

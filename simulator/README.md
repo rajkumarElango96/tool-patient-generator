@@ -42,7 +42,7 @@ Start over with `node simulator/cli.js backfill --days 7 --reset`. Settings live
 
 ## Sending to GCP
 
-1. Run `infra/gcp/setup-landing.sh` once (bucket + write-only `hospital-sender` account).
+1. Run `infra/gcp/setup.sh` once (bucket + write-only `hospital-sender` account).
 2. `gcloud auth application-default login --impersonate-service-account=hospital-sender@<project>.iam.gserviceaccount.com`
 3. Set `GCP_PROJECT_ID` and `GCP_LANDING_BUCKET` in `.env`, then `npm run sim:upload`.
 

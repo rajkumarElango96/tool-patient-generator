@@ -12,13 +12,19 @@ function loadDotEnv() {
   for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
     if (!m || line.trim().startsWith('#')) continue;
-    if (process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+    // Drop an inline comment (" # ...") and surrounding quotes
+    const value = m[2].replace(/(^|\s+)#.*$/, '').trim().replace(/^["']|["']$/g, '');
+    if (process.env[m[1]] === undefined) process.env[m[1]] = value;
   }
 }
 loadDotEnv();
 
 const env = (k, d) => (process.env[k] !== undefined && process.env[k] !== '' ? process.env[k] : d);
-const num = (k, d) => Number(env(k, d));
+const num = (k, d) => {
+  const n = Number(env(k, d));
+  if (!Number.isFinite(n)) throw new Error(`${k} must be a number, got "${process.env[k]}"`);
+  return n;
+};
 const bool = (k, d) => String(env(k, d)).toLowerCase() === 'true';
 
 const outputDir = path.resolve(ROOT, env('SIM_OUTPUT_DIR', 'output'));
@@ -28,7 +34,7 @@ module.exports = {
 
   // Who the "hospital" is
   sendingApp: env('SIM_SENDING_APP', 'SYN-EHR'),
-  facilities: env('SIM_FACILITIES', 'SYNH-CHN,SYNH-BLR').split(',').map(s => s.trim()),
+  facilities: env('SIM_FACILITIES', 'SYNH-CHN,SYNH-BLR').split(',').map(s => s.trim()).filter(Boolean),
   receivingApp: env('SIM_RECEIVING_APP', 'HUB'),
   receivingFacility: env('SIM_RECEIVING_FACILITY', 'HUB'),
   tzOffset: env('SIM_TZ_OFFSET', '+0530'),
